@@ -1,0 +1,236 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Pets = require(ReplicatedStorage.Library.Directory.Pets)
+
+-- Create the main GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "PetChangerGUI"
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false
+
+-- Main Frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Parent = ScreenGui
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+mainFrame.Size = UDim2.new(0, 400, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.Active = true
+mainFrame.Draggable = true
+
+-- Add glow effect
+local glow = Instance.new("ImageLabel")
+glow.Name = "Glow"
+glow.Parent = mainFrame
+glow.BackgroundTransparency = 1
+glow.Size = UDim2.new(1, 20, 1, 20)
+glow.Position = UDim2.new(0, -10, 0, -10)
+glow.Image = "rbxassetid://5028857084"
+glow.ImageColor3 = Color3.fromRGB(0, 170, 255)
+glow.ScaleType = Enum.ScaleType.Slice
+glow.SliceCenter = Rect.new(24, 24, 276, 276)
+glow.ZIndex = -1
+
+-- Corner radius
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = mainFrame
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Parent = mainFrame
+title.Text = "EPIC PET CHANGER"
+title.Size = UDim2.new(1, 0, 0, 50)
+title.Position = UDim2.new(0, 0, 0, 10)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBlack
+title.TextColor3 = Color3.fromRGB(0, 255, 255)
+title.TextSize = 24
+title.TextStrokeTransparency = 0.5
+title.TextStrokeColor3 = Color3.fromRGB(0, 100, 255)
+
+-- Add gradient to title
+local titleGradient = Instance.new("UIGradient")
+titleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255))
+})
+titleGradient.Rotation = 90
+titleGradient.Parent = title
+
+-- Divider line
+local divider = Instance.new("Frame")
+divider.Name = "Divider"
+divider.Parent = mainFrame
+divider.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+divider.Size = UDim2.new(0.8, 0, 0, 2)
+divider.Position = UDim2.new(0.1, 0, 0, 60)
+divider.BorderSizePixel = 0
+
+local dividerCorner = Instance.new("UICorner")
+dividerCorner.CornerRadius = UDim.new(0, 5)
+dividerCorner.Parent = divider
+
+-- From Pet Input
+local fromLabel = Instance.new("TextLabel")
+fromLabel.Name = "FromLabel"
+fromLabel.Parent = mainFrame
+fromLabel.Text = "FROM PET:"
+fromLabel.Size = UDim2.new(0.8, 0, 0, 20)
+fromLabel.Position = UDim2.new(0.1, 0, 0, 80)
+fromLabel.BackgroundTransparency = 1
+fromLabel.Font = Enum.Font.GothamBold
+fromLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+fromLabel.TextSize = 16
+fromLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local fromBox = Instance.new("TextBox")
+fromBox.Name = "FromBox"
+fromBox.Parent = mainFrame
+fromBox.PlaceholderText = "Enter pet name to change from..."
+fromBox.Size = UDim2.new(0.8, 0, 0, 40)
+fromBox.Position = UDim2.new(0.1, 0, 0, 100)
+fromBox.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+fromBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+fromBox.Font = Enum.Font.Gotham
+fromBox.TextSize = 14
+fromBox.ClearTextOnFocus = false
+
+local fromCorner = Instance.new("UICorner")
+fromCorner.CornerRadius = UDim.new(0, 8)
+fromCorner.Parent = fromBox
+
+local fromPadding = Instance.new("UIPadding")
+fromPadding.Parent = fromBox
+fromPadding.PaddingLeft = UDim.new(0, 10)
+
+-- To Pet Input
+local toLabel = Instance.new("TextLabel")
+toLabel.Name = "ToLabel"
+toLabel.Parent = mainFrame
+toLabel.Text = "TO PET:"
+toLabel.Size = UDim2.new(0.8, 0, 0, 20)
+toLabel.Position = UDim2.new(0.1, 0, 0, 150)
+toLabel.BackgroundTransparency = 1
+toLabel.Font = Enum.Font.GothamBold
+toLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+toLabel.TextSize = 16
+toLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local toBox = Instance.new("TextBox")
+toBox.Name = "ToBox"
+toBox.Parent = mainFrame
+toBox.PlaceholderText = "Enter pet name to change to..."
+toBox.Size = UDim2.new(0.8, 0, 0, 40)
+toBox.Position = UDim2.new(0.1, 0, 0, 170)
+toBox.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+toBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+toBox.Font = Enum.Font.Gotham
+toBox.TextSize = 14
+toBox.ClearTextOnFocus = false
+
+local toCorner = Instance.new("UICorner")
+toCorner.CornerRadius = UDim.new(0, 8)
+toCorner.Parent = toBox
+
+local toPadding = Instance.new("UIPadding")
+toPadding.Parent = toBox
+toPadding.PaddingLeft = UDim.new(0, 10)
+
+-- Execute Button
+local executeButton = Instance.new("TextButton")
+executeButton.Name = "ExecuteButton"
+executeButton.Parent = mainFrame
+executeButton.Text = "TRANSFORM PET"
+executeButton.Size = UDim2.new(0.8, 0, 0, 50)
+executeButton.Position = UDim2.new(0.1, 0, 0, 230)
+executeButton.Font = Enum.Font.GothamBold
+executeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+executeButton.TextSize = 18
+executeButton.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+executeButton.AutoButtonColor = false
+
+local executeCorner = Instance.new("UICorner")
+executeCorner.CornerRadius = UDim.new(0, 8)
+executeCorner.Parent = executeButton
+
+-- Button gradient
+local buttonGradient = Instance.new("UIGradient")
+buttonGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 170, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 100, 255))
+})
+buttonGradient.Rotation = 90
+buttonGradient.Parent = executeButton
+
+-- Button hover effects
+executeButton.MouseEnter:Connect(function()
+    TweenService:Create(executeButton, TweenInfo.new(0.2), {Size = UDim2.new(0.82, 0, 0, 52)}):Play()
+    TweenService:Create(buttonGradient, TweenInfo.new(0.2), {Rotation = 180}):Play()
+end)
+
+executeButton.MouseLeave:Connect(function()
+    TweenService:Create(executeButton, TweenInfo.new(0.2), {Size = UDim2.new(0.8, 0, 0, 50)}):Play()
+    TweenService:Create(buttonGradient, TweenInfo.new(0.2), {Rotation = 90}):Play()
+end)
+
+executeButton.MouseButton1Click:Connect(function()
+    -- Button click animation
+    TweenService:Create(executeButton, TweenInfo.new(0.1), {Size = UDim2.new(0.78, 0, 0, 48)}):Play()
+    TweenService:Create(executeButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 200, 255)}):Play()
+    wait(0.1)
+    TweenService:Create(executeButton, TweenInfo.new(0.1), {Size = UDim2.new(0.8, 0, 0, 50)}):Play()
+    TweenService:Create(executeButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 150, 255)}):Play()
+    
+    -- Get pet names from text boxes
+    local fromPet = fromBox.Text
+    local toPet = toBox.Text
+    
+    -- Validate input
+    if fromPet == "" or toPet == "" then
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "ERROR",
+            Text = "Please fill in both pet names!",
+            Duration = 3,
+        })
+        return
+    end
+    
+    -- Check if pets exist
+    if Pets[fromPet] and Pets[toPet] then
+        -- Transform the pet
+        for i, v in pairs(Pets[fromPet]) do
+            Pets[fromPet][i] = nil
+        end
+        for i, v in pairs(Pets[toPet]) do
+            Pets[fromPet][i] = v
+        end
+        
+        -- Success notification
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "SUCCESS!",
+            Text = "Transformed "..fromPet.." to "..toPet,
+            Duration = 5,
+        })
+        
+        -- Cool effect
+        TweenService:Create(glow, TweenInfo.new(0.5), {ImageColor3 = Color3.fromRGB(0, 255, 100)}):Play()
+        wait(0.5)
+        TweenService:Create(glow, TweenInfo.new(0.5), {ImageColor3 = Color3.fromRGB(0, 170, 255)}):Play()
+    else
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "ERROR",
+            Text = "Invalid pet names!",
+            Duration = 3,
+        })
+    end
+end)
+
+-- Initial animation
+mainFrame.Size = UDim2.new(0, 0, 0, 0)
+mainFrame.Visible = true
+TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {Size = UDim2.new(0, 400, 0, 300)}):Play()
